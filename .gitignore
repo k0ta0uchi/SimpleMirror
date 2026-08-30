@@ -1,0 +1,72 @@
+## =====================================
+## Gemini & AI Workflow
+## =====================================
+.gemini_workflow/
+.gemini/
+.system_generated/
+*.log
+
+## =====================================
+## .NET / C# / Visual Studio Build
+## =====================================
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+[Tt]estResults/
+[Bb]uild/
+[Oo]ut/
+
+## Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userprefs
+*.dbmdl
+*.jfm
+
+## Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## JetBrains Rider
+.idea/
+*.DotSettings.user
+
+## =====================================
+## C++ / Native Build Artifacts
+## =====================================
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.idb
+*.tlog
+
+## =====================================
+## OS Generated Files
+## =====================================
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+ehthumbs_vista.db
+$RECYCLE.BIN/
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+## =====================================
+## Runtime / Temp Files
+## =====================================
+*.tmp
+*~
+*.bak
+*.swp
+err*.txt
+out*.txt

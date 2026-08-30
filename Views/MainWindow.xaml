@@ -1,0 +1,496 @@
+<Window x:Class="SimpleMirror.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleMirror.Views"
+        mc:Ignorable="d"
+        Title="SimpleMirror" 
+        Icon="pack://application:,,,/Assets/app.ico"
+        Height="840" Width="480"
+        MinHeight="420" MinWidth="340"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="{Binding AlwaysOnTop}"
+        MouseDown="MainWindow_MouseDown"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True">
+
+    <Window.InputBindings>
+        <KeyBinding Key="F11" Command="{Binding ToggleFullscreenCommand}"/>
+        <KeyBinding Key="F10" Command="{Binding ToggleCleanViewCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding EscapeCommand}"/>
+        <KeyBinding Key="R" Modifiers="Control" Command="{Binding ToggleOrientationCommand}"/>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding TakeScreenshotCommand}"/>
+        <KeyBinding Key="T" Modifiers="Control" Command="{Binding ToggleAlwaysOnTopCommand}"/>
+        <KeyBinding Key="H" Modifiers="Control" Command="{Binding ToggleCleanViewCommand}"/>
+    </Window.InputBindings>
+
+    <Window.Resources>
+        <DropShadowEffect x:Key="WindowDropShadow" BlurRadius="35" ShadowDepth="6" Direction="270" Color="#000000" Opacity="0.7"/>
+
+        <!-- Concentric Radar Pulse Animations -->
+        <Storyboard x:Key="RadarPulseAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="RadarCircle1" Storyboard.TargetProperty="Width" From="80" To="200" Duration="0:0:2.8" AccelerationRatio="0.2" DecelerationRatio="0.8"/>
+            <DoubleAnimation Storyboard.TargetName="RadarCircle1" Storyboard.TargetProperty="Height" From="80" To="200" Duration="0:0:2.8" AccelerationRatio="0.2" DecelerationRatio="0.8"/>
+            <DoubleAnimation Storyboard.TargetName="RadarCircle1" Storyboard.TargetProperty="Opacity" From="0.7" To="0.0" Duration="0:0:2.8"/>
+            
+            <DoubleAnimation Storyboard.TargetName="RadarCircle2" Storyboard.TargetProperty="Width" From="80" To="260" Duration="0:0:2.8" BeginTime="0:0:0.9" AccelerationRatio="0.2" DecelerationRatio="0.8"/>
+            <DoubleAnimation Storyboard.TargetName="RadarCircle2" Storyboard.TargetProperty="Height" From="80" To="260" Duration="0:0:2.8" BeginTime="0:0:0.9" AccelerationRatio="0.2" DecelerationRatio="0.8"/>
+            <DoubleAnimation Storyboard.TargetName="RadarCircle2" Storyboard.TargetProperty="Opacity" From="0.5" To="0.0" Duration="0:0:2.8" BeginTime="0:0:0.9"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <!-- Outer Window Frame with Continuous Apple Squircle Curve (Radius 16) & Top Light Specular Rim -->
+    <Border x:Name="MainWindowBorder"
+            Background="{StaticResource BrushBgDeep}"
+            BorderBrush="{StaticResource BrushSpecularBorder}"
+            BorderThickness="1"
+            CornerRadius="16"
+            Effect="{StaticResource WindowDropShadow}">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 1. Title Bar -->
+                <RowDefinition Height="Auto"/> <!-- 2. Quick Action Toolbar -->
+                <RowDefinition Height="*"/>    <!-- 3. Video / Standby Container -->
+                <RowDefinition Height="Auto"/> <!-- 4. Status Bar -->
+            </Grid.RowDefinitions>
+
+            <!-- ============================================== -->
+            <!-- 1. MACOS-INSPIRED CUSTOM TITLE BAR             -->
+            <!-- ============================================== -->
+            <Border x:Name="TitleBarElement"
+                    Grid.Row="0"
+                    Background="{StaticResource BrushBgElevated}"
+                    CornerRadius="16,16,0,0"
+                    Height="40"
+                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                    BorderThickness="0,0,0,1"
+                    MouseLeftButtonDown="TitleBar_MouseDown">
+                <Grid Margin="12,0,8,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/> <!-- Left Window Controls / Brand -->
+                        <ColumnDefinition Width="*"/>    <!-- Center Status Capsule -->
+                        <ColumnDefinition Width="Auto"/> <!-- Right Window Controls -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: App Brand & Icon -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- AirPlay Radiating Icon -->
+                        <Border Width="24" Height="24" CornerRadius="6" Background="{StaticResource BrushAccentGradient}" Margin="0,0,8,0">
+                            <Path Data="M6,18L12,12L18,18H6M18,4H6A2,2 0 0,0 4,6V14A2,2 0 0,0 6,16H18A2,2 0 0,0 20,14V6A2,2 0 0,0 18,4Z"
+                                  Fill="White" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="SimpleMirror" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Center: Apple Dynamic Island Capsule Status Indicator -->
+                    <Border Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#18FFFFFF" BorderBrush="{StaticResource BrushSpecularBorder}" BorderThickness="1"
+                            CornerRadius="12" Padding="10,3">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Breathing Glow Status Dot -->
+                            <Ellipse Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,7,0">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{StaticResource BrushWarning}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsStopped}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource BrushTextTertiary}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                            <TextBlock Text="{Binding StatusText}" FontSize="11" FontWeight="Medium" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Right: Window Controls (Minimize / Maximize / Close) -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource WindowControlButton}" Click="Minimize_Click" ToolTip="最小化">
+                            <Path Data="M0,0H10" Stroke="{StaticResource BrushTextSecondary}" StrokeThickness="1.2" Width="10" Height="2" Stretch="Uniform"/>
+                        </Button>
+                        <Button Style="{StaticResource WindowControlButton}" Click="Maximize_Click" ToolTip="最大化 / 元に戻す">
+                            <Path Data="M0,0H9V9H0Z" Stroke="{StaticResource BrushTextSecondary}" StrokeThickness="1.2" Width="9" Height="9" Stretch="Uniform"/>
+                        </Button>
+                        <Button Style="{StaticResource WindowCloseButton}" Click="Close_Click" ToolTip="閉じる">
+                            <Path Data="M1,1L9,9M9,1L1,9" Stroke="{StaticResource BrushTextSecondary}" StrokeThickness="1.4" Width="9" Height="9" Stretch="Uniform"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================================== -->
+            <!-- 2. QUICK ACTION FLOATING TOOLBAR               -->
+            <!-- ============================================== -->
+            <Border x:Name="ControlBarElement" Grid.Row="1" Background="{StaticResource BrushBgDeep}" BorderBrush="{StaticResource BrushBorderSubtle}" BorderThickness="0,0,0,1" Padding="10,5">
+                <Grid>
+                    <!-- Left Tools -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <!-- Always on Top -->
+                        <Button Command="{Binding ToggleAlwaysOnTopCommand}"
+                                ToolTip="常に最前面に固定 (Ctrl+T)"
+                                Margin="2,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AlwaysOnTop}" Value="True">
+                                            <Setter Property="Background" Value="#330A84FF"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Path Data="M16,12V4H17V2H7V4H8V12L6,14V16H11V22H13V16H18V14L16,12Z"
+                                  Width="13" Height="13" Stretch="Uniform">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Fill" Value="{StaticResource BrushTextSecondary}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding AlwaysOnTop}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource BrushAccent}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Button>
+
+                        <!-- Fullscreen -->
+                        <Button Style="{StaticResource IconButton}"
+                                Command="{Binding ToggleFullscreenCommand}"
+                                ToolTip="全画面表示 (F11)"
+                                Margin="2,0">
+                            <Path Data="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z"
+                                  Fill="{StaticResource BrushTextSecondary}" Width="13" Height="13" Stretch="Uniform"/>
+                        </Button>
+
+                        <!-- OBS Clean View -->
+                        <Button Command="{Binding ToggleCleanViewCommand}"
+                                ToolTip="OBS配信用クリーン表示 (F10 / Ctrl+H)"
+                                Margin="2,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCleanView}" Value="True">
+                                            <Setter Property="Background" Value="#33FF375F"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Path Data="M18,4L20,8H17L15,4H13L15,8H12L10,4H8L10,8H7L5,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V4H18Z"
+                                  Width="13" Height="13" Stretch="Uniform">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Fill" Value="{StaticResource BrushTextSecondary}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCleanView}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource BrushPink}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Button>
+
+                        <!-- Rotation -->
+                        <Button Style="{StaticResource IconButton}"
+                                Command="{Binding ToggleOrientationCommand}"
+                                ToolTip="画面の向きを手動回転 (Ctrl+R)"
+                                Margin="2,0">
+                            <Path Data="M7.47,7.05C7,7.74 6.7,8.54 6.64,9.41L8.6,9.15C8.64,8.59 8.84,8.08 9.17,7.63L7.47,7.05M19,12A7,7 0 0,1 12,19V22L8,18L12,14V17A5,5 0 0,0 17,12C17,10.66 16.47,9.44 15.61,8.54L17.03,7.12C18.25,8.37 19,10.09 19,12M12,2V5A5,5 0 0,0 7,10C7,11.34 7.53,12.56 8.39,13.46L6.97,14.88C5.75,13.63 5,11.91 5,10A7,7 0 0,1 12,3V0L16,4L12,8V2Z"
+                                  Fill="{StaticResource BrushTextSecondary}" Width="13" Height="13" Stretch="Uniform"/>
+                        </Button>
+
+                        <!-- Auto-Orientation Checkbox -->
+                        <CheckBox IsChecked="{Binding EnableAutoOrientation}"
+                                  ToolTip="自動回転 (ONにするとiPhoneの向きに合わせて自動切り替え)"
+                                  Margin="2,0,4,0"
+                                  VerticalAlignment="Center">
+                            <CheckBox.Style>
+                                <Style TargetType="CheckBox">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="CheckBox">
+                                                <Border x:Name="pill"
+                                                        Background="Transparent"
+                                                        BorderBrush="{StaticResource BrushBorderSubtle}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Padding="5,3">
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Border x:Name="box" Width="12" Height="12" CornerRadius="3"
+                                                                Background="#20FFFFFF" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" Margin="0,0,4,0">
+                                                            <Path x:Name="check" Data="M3,6L5,8.5L9.5,3.5" Stroke="White" StrokeThickness="1.5"
+                                                                  Width="8" Height="7" Stretch="Uniform" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <TextBlock x:Name="label" Text="自動" FontSize="11" FontWeight="Medium" Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="pill" Property="Background" Value="#260A84FF"/>
+                                                        <Setter TargetName="pill" Property="BorderBrush" Value="#500A84FF"/>
+                                                        <Setter TargetName="box" Property="Background" Value="{StaticResource BrushAccent}"/>
+                                                        <Setter TargetName="box" Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+                                                        <Setter TargetName="check" Property="Visibility" Value="Visible"/>
+                                                        <Setter TargetName="label" Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="pill" Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+                                                        <Setter TargetName="label" Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+
+                        <!-- Screenshot -->
+                        <Button Style="{StaticResource IconButton}"
+                                Command="{Binding TakeScreenshotCommand}"
+                                ToolTip="スクリーンショット撮影 (Ctrl+S)"
+                                Margin="2,0">
+                            <Path Data="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"
+                                  Fill="{StaticResource BrushTextSecondary}" Width="13" Height="13" Stretch="Uniform"/>
+                        </Button>
+
+                        <!-- Open Folder -->
+                        <Button Style="{StaticResource IconButton}"
+                                Command="{Binding OpenScreenshotFolderCommand}"
+                                ToolTip="保存先フォルダーを開く"
+                                Margin="2,0">
+                            <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"
+                                  Fill="{StaticResource BrushTextSecondary}" Width="13" Height="13" Stretch="Uniform"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Right Tools -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <!-- Restart / Reconnect -->
+                        <Button Style="{StaticResource IconButton}"
+                                Command="{Binding RestartServerCommand}"
+                                ToolTip="AirPlay再起動"
+                                Margin="2,0">
+                            <Path Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"
+                                  Fill="{StaticResource BrushTextSecondary}" Width="13" Height="13" Stretch="Uniform"/>
+                        </Button>
+
+                        <!-- Settings -->
+                        <Button Style="{StaticResource IconButton}"
+                                Command="{Binding OpenSettingsCommand}"
+                                ToolTip="設定"
+                                Margin="2,0">
+                            <Path Data="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81C14.36,2.58,14.16,2.4,13.92,2.4 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"
+                                  Fill="{StaticResource BrushTextSecondary}" Width="13" Height="13" Stretch="Uniform"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================================== -->
+            <!-- 3. VIDEO HOST / STANDBY GUIDANCE CONTAINER     -->
+            <!-- ============================================== -->
+            <Grid Grid.Row="2" Background="Black">
+                <!-- Native Video Win32 Host -->
+                <ContentControl x:Name="VideoHostContainer" MouseDown="VideoContainer_MouseDown" Focusable="False"/>
+
+                <!-- Standby Screen (Shown when waiting for iPhone AirPlay) -->
+                <Grid x:Name="StandbyOverlay"
+                      Background="{StaticResource BrushBgDeep}">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+
+                    <!-- Radar Pulse Concentric Circles Background -->
+                    <Canvas HorizontalAlignment="Center" VerticalAlignment="Center" Width="0" Height="0">
+                        <Ellipse x:Name="RadarCircle1" Width="80" Height="80" Canvas.Left="-40" Canvas.Top="-40"
+                                 Fill="{StaticResource BrushRadarRing}" IsHitTestVisible="False"/>
+                        <Ellipse x:Name="RadarCircle2" Width="80" Height="80" Canvas.Left="-40" Canvas.Top="-40"
+                                 Fill="{StaticResource BrushRadarRing}" IsHitTestVisible="False"/>
+                    </Canvas>
+
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,0">
+                        <!-- AirPlay Glowing Icon Badge -->
+                        <Border Width="64" Height="64" CornerRadius="18"
+                                Background="{StaticResource BrushAccentGradient}"
+                                BorderBrush="{StaticResource BrushSpecularBorder}"
+                                BorderThickness="1"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,20"
+                                Effect="{StaticResource AccentGlowEffect}">
+                            <Path Data="M6,18L12,12L18,18H6M18,4H6A2,2 0 0,0 4,6V14A2,2 0 0,0 6,16H18A2,2 0 0,0 20,14V6A2,2 0 0,0 18,4Z"
+                                  Fill="White" Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <TextBlock Text="iPhoneの接続を待機中" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                        <TextBlock Text="同一Wi-Fi上のiPhoneからミラーリングを開始してください" FontSize="12" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,24" TextAlignment="Center"/>
+
+                        <!-- Connection Guide Card (Apple Frosted Glass) -->
+                        <Border Background="{StaticResource BrushBgElevated}"
+                                BorderBrush="{StaticResource BrushBorder}"
+                                BorderThickness="1"
+                                CornerRadius="14"
+                                Padding="18,14"
+                                Width="340"
+                                Effect="{StaticResource AppleCardShadow}">
+                            <StackPanel>
+                                <TextBlock Text="接続手順" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource BrushAccent}" Margin="0,0,0,10"/>
+
+                                <!-- Step 1 -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="16" Height="16" CornerRadius="8" Background="{StaticResource BrushAccent}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,1,0,0">
+                                        <TextBlock Text="1" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Text="iPhoneの右上からスワイプし、コントロールセンターを開く" FontSize="11.5" Foreground="{StaticResource BrushTextPrimary}" TextWrapping="Wrap"/>
+                                </Grid>
+
+                                <!-- Step 2 -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="16" Height="16" CornerRadius="8" Background="{StaticResource BrushAccent}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,1,0,0">
+                                        <TextBlock Text="2" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Text="「画面ミラーリング (2つの四角形)」アイコンをタップ" FontSize="11.5" Foreground="{StaticResource BrushTextPrimary}" TextWrapping="Wrap"/>
+                                </Grid>
+
+                                <!-- Step 3 -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="16" Height="16" CornerRadius="8" Background="{StaticResource BrushAccent}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,1,0,0">
+                                        <TextBlock Text="3" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Text="一覧からこのPC名を選択すると開始されます" FontSize="11.5" Foreground="{StaticResource BrushTextPrimary}" TextWrapping="Wrap"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Fullscreen Exit Overlay Pill (Top Right) -->
+                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,16,16,0"
+                        Background="{StaticResource BrushGlassOverlay}"
+                        BorderBrush="{StaticResource BrushSpecularBorder}"
+                        BorderThickness="1"
+                        CornerRadius="16"
+                        Padding="14,6"
+                        Opacity="0.9"
+                        Cursor="Hand"
+                        Effect="{StaticResource ApplePillShadow}"
+                        MouseLeftButtonDown="ExitFullscreen_Click">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFullscreen}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="1.0"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M14,14H19V16H16V19H14V14M5,14H10V19H8V16H5V14M19,5V10H17V7H14V5H19M5,5H10V7H7V10H5V5Z"
+                              Fill="{StaticResource BrushTextPrimary}" Width="12" Height="12" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="全画面解除 (Esc / F11)" FontSize="11" FontWeight="Medium" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Clean View Exit Overlay Pill (Top Center) -->
+                <Border HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,16,0,0"
+                        Background="{StaticResource BrushGlassOverlay}"
+                        BorderBrush="{StaticResource BrushPink}"
+                        BorderThickness="1"
+                        CornerRadius="16"
+                        Padding="16,6"
+                        Opacity="0.9"
+                        Cursor="Hand"
+                        Effect="{StaticResource ApplePillShadow}"
+                        MouseLeftButtonDown="ExitCleanView_Click">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsCleanView}" Value="True"/>
+                                        <Condition Binding="{Binding IsFullscreen}" Value="False"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="1.0"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M18,4L20,8H17L15,4H13L15,8H12L10,4H8L10,8H7L5,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V4H18Z"
+                              Fill="{StaticResource BrushPink}" Width="12" Height="12" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="🎬 OBSクリーン表示中 (F10 / Escで復帰)" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Apple Dynamic Island Style Toast Notification -->
+                <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,24"
+                        Background="{StaticResource BrushGlassOverlay}"
+                        BorderBrush="{StaticResource BrushSpecularBorder}"
+                        BorderThickness="1"
+                        CornerRadius="20"
+                        Padding="20,10"
+                        Effect="{StaticResource AppleWindowShadow}"
+                        Visibility="{Binding IsToastVisible, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding ToastMessage}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                </Border>
+            </Grid>
+
+            <!-- ============================================== -->
+            <!-- 4. MACOS-STYLE FOOTER STATUS BAR               -->
+            <!-- ============================================== -->
+            <Border x:Name="StatusBarElement" Grid.Row="3" Background="{StaticResource BrushBgElevated}" CornerRadius="0,0,16,16" Height="30" Padding="14,0" BorderBrush="{StaticResource BrushBorderSubtle}" BorderThickness="0,1,0,0">
+                <Grid>
+                    <!-- Left: Device Name -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding SessionInfo.DeviceName, FallbackValue='未接続'}" FontSize="11" FontWeight="Medium" Foreground="{StaticResource BrushTextSecondary}"/>
+                    </StackPanel>
+
+                    <!-- Right: Resolution & FPS Telemetry -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding SessionInfo.ResolutionText, FallbackValue='---'}" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,12,0"/>
+                        <TextBlock Text="{Binding SessionInfo.FpsText, FallbackValue='---'}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushAccent}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
