@@ -7,15 +7,15 @@
 <a name="english"></a>
 ## English
 
-**SimpleMirror** is a high-performance, ultra-low latency AirPlay receiver and iOS screen mirroring desktop application crafted with **Apple Design System** aesthetics for Windows (.NET 9 / WPF / Direct3D).
+**SimpleMirror** is a high-performance, ultra-low latency AirPlay receiver and iOS screen mirroring desktop application crafted with a modern, fluid glass aesthetic for Windows (.NET 9 / WPF / Direct3D).
 
 ### ✨ Key Features
 
-- 🍎 **Apple Design System & Tactile Physics**:
+- ✨ **Fluid Modern UI & Tactile Physics**:
   - Tactile micro-scale button animations (`scale(0.95)`) for instant pointer-down feedback.
   - Liquid Glass translucent materials with light-catching top specular highlights.
-  - Continuous squircle curves (`CornerRadius="16"`) and Apple Dynamic Island style floating status pills.
-  - Native iOS-style animated toggle switches in settings.
+  - Continuous squircle curves (`CornerRadius="16"`) and floating pill status indicators.
+  - Smooth animated toggle switches in settings.
 - ⚡ **3-Tier Performance Profiles**:
   - **⚡ Ultra Low Latency (Performance)**: 60fps with presentation buffer bypass (`-vsync no`). Eliminates iPhone downscaling jitter, perfect for rhythm & action games.
   - **⚖️ Balanced (Standard)**: Crisp 1080p @ 60fps, optimal for browsing, presentations, and streaming.
@@ -31,7 +31,7 @@
 - 📸 **Direct Snapshot (`Ctrl+S`)**:
   - One-click GPU-rendered frame capture saved to disk and automatically copied to your clipboard.
 - 🛡️ **Zero-Config Bonjour & Firewall Integration**:
-  - Built-in UDP multicast DNS (mDNS) announcer + Apple dnssd integration.
+  - Built-in UDP multicast DNS (mDNS) announcer + standard dnssd integration.
   - Automatic UAC firewall configuration helper.
 
 ### ⌨️ Keyboard Shortcuts
@@ -66,15 +66,15 @@ dotnet run
 <a name="日本語"></a>
 ## 日本語
 
-**SimpleMirror** は、**Apple Design System** の哲学（触覚フィードバック、Liquid Glass、連続曲線スクワークル）を取り入れた、Windows (.NET 9 / WPF / Direct3D) 向けの超低遅延・高画質 AirPlay レシーバー & iOS 画面ミラーリングアプリです。
+**SimpleMirror** は、洗練されたモダンUI（触覚フィードバック、Liquid Glass、連続曲線スクワークル）を取り入れた、Windows (.NET 9 / WPF / Direct3D) 向けの超低遅延・高画質 AirPlay レシーバー & iOS 画面ミラーリングアプリです。
 
 ### ✨ 主な機能
 
-- 🍎 **Apple Design System & 触覚フィードバック**:
+- ✨ **洗練されたモダンUI & 触覚フィードバック**:
   - ボタン押下時のマイクロスケール（`scale(0.95)`）スプリングアニメーションによる吸い付くような操作感。
   - 上端に光が当たる極薄のスペキュラーハイライト境界線と Liquid Glass マテリアル。
-  - 連続曲線（`CornerRadius="16"`）と呼吸するように発光する Dynamic Island スタイルのステータスカプセル。
-  - iOS ネイティブ風のスライディングトグルスイッチ（環境設定）。
+  - 連続曲線（`CornerRadius="16"`）と呼吸するように発光するフローティングステータスカプセル。
+  - スムーズなスライディングトグルスイッチ（環境設定）。
 - ⚡ **3段階の動作プロファイル**:
   - **⚡ 超低遅延 / パフォーマンス**: 60fps / 垂直同期待機スキップ（`-vsync no`）。iPhone のダウンスケール負荷を排除し、音ゲーやアクションゲームでも滑らかに追従。
   - **⚖️ 標準 / バランス**: 1080p @ 60fps。文字の視認性と滑らかさ、低遅延のベストバランス。
@@ -90,7 +90,7 @@ dotnet run
 - 📸 **ワンクリック・スクリーンショット (`Ctrl+S`)**:
   - ダイレクト GPU キャプチャ画像をピクチャフォルダに自動保存し、同時にクリップボードへコピー。
 - 🛡️ **ゼロコンフィグ Bonjour & ファイアウォール自動構成**:
-  - Apple dnssd + 独自 UDP mDNS マルチキャストによる即時検出。
+  - 標準 dnssd + 独自 UDP mDNS マルチキャストによる即時検出。
   - ワンクリック UAC 昇格によるファイアウォール自動許可。
 
 ### ⌨️ ショートカットキー一覧
