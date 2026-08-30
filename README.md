@@ -1,6 +1,6 @@
 # SimpleMirror 🪞📱
 
-[English](#english) | [日本語](#日本語)
+🌐 **[Official Website & Download (公式LP・ダウンロード)](https://k0ta0uchi.github.io/SimpleMirror/)** | [English](#english) | [日本語](#日本語)
 
 ---
 
