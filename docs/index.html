@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimpleMirror - 超低遅延 AirPlay レシーバー & iOS 画面ミラーリング for Windows</title>
+  <meta name="description" content="Windows (.NET 9 / WPF / Direct3D) 向け超低遅延・高画質 AirPlay レシーバー & iOS 画面ミラーリングアプリ。OBS Studio クリーン配信用モード、Direct3D 60fps レンダリング搭載。">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230a84ff'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='56'>🪞</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Glow & Grid -->
+  <div class="bg-mesh">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="brand-logo">
+        <span class="logo-icon">🪞</span>
+        <span class="logo-text">SimpleMirror</span>
+        <span class="version-badge">v0.1.0</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="#features" class="nav-link">特徴</a>
+        <a href="#obs-mode" class="nav-link">OBS 配信用モード</a>
+        <a href="#how-to-use" class="nav-link">使い方</a>
+        <a href="#shortcuts" class="nav-link">ショートカット</a>
+        <a href="#download" class="nav-cta-btn">
+          <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          ダウンロード
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Windows 向け 高性能 AirPlay レシーバー</span>
+      </div>
+      <h1 class="hero-title">
+        iPhoneの画面を、<br>
+        <span class="text-gradient">極限の低遅延 & 高画質</span> で映す。
+      </h1>
+      <p class="hero-desc">
+        SimpleMirror は、Direct3D による 60fps レンダリングと洗練されたモダンUIを備えた Windows 向け AirPlay レシーバーです。OBS Studio での配信に最適化されたクリーン表示モードや、音ゲー・アクションに強い超低遅延プロファイルを搭載。
+      </p>
+
+      <div class="hero-actions">
+        <a href="https://github.com/k0ta0uchi/SimpleMirror/releases/download/v0.1.0/SimpleMirror-v0.1.0-win-x64-portable.zip" class="btn-primary" id="main-download-btn">
+          <div class="btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="btn-content">
+            <span class="btn-main-text">SimpleMirror を無料ダウンロード</span>
+            <span class="btn-sub-text">ポータブル版 ZIP (v0.1.0) • Windows 10/11 x64 (~167 MB)</span>
+          </div>
+        </a>
+        <a href="https://github.com/k0ta0uchi/SimpleMirror" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub で見る
+        </a>
+      </div>
+
+      <div class="hero-specs">
+        <div class="spec-item">
+          <span class="spec-check">✓</span>
+          <span>インストール不要（解凍してすぐ起動）</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-check">✓</span>
+          <span>Direct3D 60fps ハードウェア描画</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-check">✓</span>
+          <span>完全無料 & オープンソース (MIT)</span>
+        </div>
+      </div>
+
+      <!-- App Mockup Preview -->
+      <div class="mockup-wrapper">
+        <div class="mockup-glow"></div>
+        <div class="mockup-frame">
+          <!-- Window Titlebar -->
+          <div class="mockup-titlebar">
+            <div class="mockup-lights">
+              <span class="light red"></span>
+              <span class="light yellow"></span>
+              <span class="light green"></span>
+            </div>
+            <div class="mockup-capsule">
+              <span class="capsule-pulse"></span>
+              <span class="capsule-text">SimpleMirror • 接続待機中 (AirPlay 稼働中)</span>
+            </div>
+            <div class="mockup-controls">
+              <span class="tag-pill">60 FPS</span>
+            </div>
+          </div>
+          <!-- Window Content -->
+          <div class="mockup-screen">
+            <div class="screen-canvas">
+              <div class="phone-mirror-preview">
+                <div class="preview-dynamic-pill"></div>
+                <div class="preview-ios-content">
+                  <div class="preview-clock">09:41</div>
+                  <div class="preview-widget-grid">
+                    <div class="preview-widget">
+                      <div class="widget-icon">⚡</div>
+                      <div class="widget-label">SimpleMirror</div>
+                      <div class="widget-val">60 fps</div>
+                    </div>
+                    <div class="preview-widget">
+                      <div class="widget-icon">🎬</div>
+                      <div class="widget-label">OBS Ready</div>
+                      <div class="widget-val">F10 Clean</div>
+                    </div>
+                  </div>
+                  <div class="preview-icons-row">
+                    <span class="preview-app-icon app-music"></span>
+                    <span class="preview-app-icon app-photo"></span>
+                    <span class="preview-app-icon app-game"></span>
+                    <span class="preview-app-icon app-chat"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="preview-overlay-info">
+                <div class="overlay-card">
+                  <span class="card-icon">⚡</span>
+                  <div>
+                    <div class="card-title">超低遅延 Direct3D レンダリング</div>
+                    <div class="card-sub">Presentation Bypass / 0-frame Buffer Latency</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Bottom Toolbar Mockup -->
+            <div class="mockup-toolbar">
+              <div class="tool-btn active">⚡ パフォーマンス</div>
+              <div class="tool-btn">🔄 回転 (Ctrl+R)</div>
+              <div class="tool-btn">📸 キャプチャ (Ctrl+S)</div>
+              <div class="tool-btn obs-btn">🎬 OBS Clean View (F10)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="section features-section" id="features">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-subtitle">FEATURES</h2>
+        <h3 class="section-title">遅延と使い心地に妥協しない、6つのこだわり</h3>
+        <p class="section-desc">Windows での iPhone ミラーリング体験を再定義する洗練された機能群。</p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h4 class="feature-title">Direct3D 60fps & 超低遅延</h4>
+          <p class="feature-text">
+            描画バッファ待機をバイパス（<code>-vsync no</code>）し、iPhone側のダウンスケール負荷を排除。音ゲーやアクションゲームでもズレのない滑らかな追従性を実現します。
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card highlighted">
+          <div class="feature-icon-wrapper purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          </div>
+          <h4 class="feature-title">OBS Studio 配信用 Clean View</h4>
+          <p class="feature-text">
+            <code>F10</code> または <code>Ctrl+H</code> を押すだけで、枠線・ツールバー・タイトルバーを完全消去。OBSのウィンドウキャプチャで切り抜き調整なしに100%純粋なゲーム画面を取得できます。
+          </p>
+          <span class="card-badge">配信者おすすめ</span>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          </div>
+          <h4 class="feature-title">スマート回転 & マルチモニター</h4>
+          <p class="feature-text">
+            縦向き・横向きの切り替え時にTCP切断・再接続が発生しないインプレース拡大縮小。サブモニター配置時もプライマリ画面へ勝手に飛ばない境界判定を備えています。
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper cyan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h4 class="feature-title">ワンクリック GPU キャプチャ</h4>
+          <p class="feature-text">
+            <code>Ctrl+S</code> を押すだけで、GPU描画フレームを高解像度のままピクチャフォルダに自動保存し、同時にクリップボードへ自動コピー。資料作成やSNS共有が即座に完了します。
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h4 class="feature-title">ゼロコンフィグ Bonjour & FW</h4>
+          <p class="feature-text">
+            独自UDPマルチキャストDNS + dnssdによる即時自動告知。Windowsファイアウォールの許可もアプリ内からワンクリックでUAC自動昇格設定できます。
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper pink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h4 class="feature-title">3段階の画質・速度プロファイル</h4>
+          <p class="feature-text">
+            超低遅延（パフォーマンス）、1080p標準（バランス）、1440p/2K最高精細（クオリティ）を用途に合わせてワンタップで切り替え可能です。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBS Mode Showcase -->
+  <section class="section obs-section" id="obs-mode">
+    <div class="container">
+      <div class="obs-container">
+        <div class="obs-info">
+          <div class="section-badge">FOR STREAMERS</div>
+          <h3 class="obs-title">OBS Studio での配信が、<br>かつてないほど快適に。</h3>
+          <p class="obs-desc">
+            従来のミラーリングソフトでは、タイトルバーや余白のトリミング設定が毎回必要でした。SimpleMirror の <strong>クリーン表示モード (`F10`)</strong> を使えば、不要なUI要素を瞬時に完全非表示。OBS の「ウィンドウキャプチャ」を指定するだけで、一切のクロップ作業なしに配信画面へレイアウトできます。
+          </p>
+          <ul class="obs-list">
+            <li><span>🎬</span> <strong>F10 / Ctrl+H</strong> でワンタッチ切り替え</li>
+            <li><span>📐</span> アスペクト比を完全維持したままリサイズ可能</li>
+            <li><span>🔝</span> <strong>Ctrl+T</strong> で常に最前面表示に固定</li>
+          </ul>
+        </div>
+        <div class="obs-visual">
+          <div class="obs-card">
+            <div class="obs-card-header">
+              <div class="obs-status"><span class="live-dot"></span> OBS Studio Window Capture Ready</div>
+              <span class="obs-res">1170 × 2532 (60 FPS)</span>
+            </div>
+            <div class="obs-preview-box">
+              <div class="clean-canvas-indicator">
+                <span class="clean-text">✨ Pure 100% Video Canvas (Chrome-free)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Use (3 Steps) -->
+  <section class="section how-section" id="how-to-use">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-subtitle">HOW TO USE</h2>
+        <h3 class="section-title">わずか3ステップですぐにミラーリング</h3>
+        <p class="section-desc">同一Wi-Fi環境のiPhoneとPCがあれば、面倒な設定なしに数秒で繋がります。</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon">💻</div>
+          <h4 class="step-title">SimpleMirror を起動</h4>
+          <p class="step-text">ダウンロードした ZIP を解凍し、<code>SimpleMirror.exe</code> を起動します。インストールは不要です。</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon">📱</div>
+          <h4 class="step-title">コントロールセンターを開く</h4>
+          <p class="step-text">iPhoneの画面右上（または下部）からスワイプしてコントロールセンターを開き、<strong>画面ミラーリング</strong> をタップします。</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon">✨</div>
+          <h4 class="step-title">「SimpleMirror」を選択</h4>
+          <p class="step-text">レシーバー一覧に表示される <strong>SimpleMirror</strong> をタップすると、即座に大画面へ滑らかに映し出されます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shortcuts Table -->
+  <section class="section shortcuts-section" id="shortcuts">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-subtitle">KEYBOARD SHORTCUTS</h2>
+        <h3 class="section-title">作業を効率化するショートカットキー</h3>
+      </div>
+
+      <div class="shortcuts-table-wrapper">
+        <table class="shortcuts-table">
+          <thead>
+            <tr>
+              <th>ショートカット</th>
+              <th>機能説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>F11</kbd></td>
+              <td>全画面表示（フルスクリーン）の切り替え</td>
+            </tr>
+            <tr>
+              <td><kbd>F10</kbd> または <kbd>Ctrl</kbd> + <kbd>H</kbd></td>
+              <td>OBS 配信用クリーン表示モード（枠線・UI消去）の切り替え</td>
+            </tr>
+            <tr>
+              <td><kbd>Escape</kbd></td>
+              <td>全画面 / クリーンモードの即時解除</td>
+            </tr>
+            <tr>
+              <td><kbd>Ctrl</kbd> + <kbd>R</kbd></td>
+              <td>画面の向きを手動回転（縦 ⇄ 横）</td>
+            </tr>
+            <tr>
+              <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+              <td>ワンクリック・スクリーンショット撮影（クリップボード自動コピー）</td>
+            </tr>
+            <tr>
+              <td><kbd>Ctrl</kbd> + <kbd>T</kbd></td>
+              <td>常に最前面表示 (Always on Top) の切り替え</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download Section -->
+  <section class="section download-section" id="download">
+    <div class="container">
+      <div class="download-card">
+        <div class="download-content">
+          <div class="section-badge">LATEST RELEASE</div>
+          <h3 class="download-title">今すぐ SimpleMirror を体験する</h3>
+          <p class="download-desc">
+            Windows 10 / 11 (x64) に対応。インストーラ不要で、ダウンロード後すぐに起動してご利用いただけます。
+          </p>
+
+          <div class="download-options">
+            <!-- Option 1: Portable ZIP (Recommended) -->
+            <a href="https://github.com/k0ta0uchi/SimpleMirror/releases/download/v0.1.0/SimpleMirror-v0.1.0-win-x64-portable.zip" class="download-option-btn primary-dl">
+              <div class="dl-badge-tag">推奨</div>
+              <div class="dl-opt-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </div>
+              <div class="dl-opt-text">
+                <span class="dl-opt-title">ポータブル版 ZIP パッケージ</span>
+                <span class="dl-opt-meta">SimpleMirror-v0.1.0-win-x64-portable.zip (~167 MB)</span>
+              </div>
+            </a>
+
+            <!-- Option 2: Standalone Exe -->
+            <a href="https://github.com/k0ta0uchi/SimpleMirror/releases/download/v0.1.0/SimpleMirror.exe" class="download-option-btn secondary-dl">
+              <div class="dl-opt-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+              </div>
+              <div class="dl-opt-text">
+                <span class="dl-opt-title">単体実行ファイル (.exe)</span>
+                <span class="dl-opt-meta">SimpleMirror.exe (~173 MB)</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="download-footer-links">
+            <a href="https://github.com/k0ta0uchi/SimpleMirror/releases/tag/v0.1.0" target="_blank" rel="noopener noreferrer" class="link-muted">
+              📦 GitHub Releases ページで確認
+            </a>
+            <span class="separator">•</span>
+            <a href="https://github.com/k0ta0uchi/SimpleMirror" target="_blank" rel="noopener noreferrer" class="link-muted">
+              ⭐ GitHub リポジトリ
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <span class="footer-logo">🪞 SimpleMirror</span>
+        <span class="footer-copy">© 2026 Kota Ouchi. Released under the MIT License.</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/k0ta0uchi/SimpleMirror" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/k0ta0uchi/SimpleMirror/releases">Releases</a>
+        <a href="https://github.com/k0ta0uchi/SimpleMirror/issues">Issues / フィードバック</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
